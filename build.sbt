@@ -4,7 +4,7 @@ version := "0.0.1"
 
 organization := "github.com/TanUkkii007"
 
-description := "A Scala library for easy and idiomatic byte array key-value complex (de)serialization"
+description := "schemaless byte array complex to Scala type coversion"
 
 homepage := Some(new URL("https://github.com/TanUkkii007/bytearray-schema"))
 
