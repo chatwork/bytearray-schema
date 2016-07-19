@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package spray.json
+package tanukkii.bytearrayschema
 
 trait ProductFormatsInstances { self: ProductFormats with StandardFormats =>
 [#  // Case classes with 1 parameters
 
-  def jsonFormat1[[#P1 :JF#], T <: Product :ClassManifest](construct: ([#P1#]) => T): RootJsonFormat[T] = {
+  def bytesMapFormat1[[#P1 :JF#], T <: Product :ClassManifest](construct: ([#P1#]) => T): BytesMapFormat[T] = {
     val Array([#p1#]) = extractFieldNames(classManifest[T])
-    jsonFormat(construct, [#p1#])
+    bytesMapFormat(construct, [#p1#])
   }
-  def jsonFormat[[#P1 :JF#], T <: Product](construct: ([#P1#]) => T, [#fieldName1: String#]): RootJsonFormat[T] = new RootJsonFormat[T]{
+  def bytesMapFormat[[#P1 :JF#], T <: Product](construct: ([#P1#]) => T, [#fieldName1: String#]): BytesMapFormat[T] = new BytesMapFormat[T]{
     def write(p: T) = {
-      val fields = new collection.mutable.ListBuffer[(String, JsValue)]
+      val fields = new collection.mutable.ListBuffer[(String, Array[Byte])]
       fields.sizeHint(1 * 2)
       [#fields ++= productElement##2Field[P1](fieldName1, p, 0)#
       ]
-      JsObject(fields: _*)
+      fields.toMap
     }
-    def read(value: JsValue) = {
+    def read(value: Map[String, Array[Byte]]) = {
       [#val p1V = fromField[P1](value, fieldName1)#
       ]
       construct([#p1V#])

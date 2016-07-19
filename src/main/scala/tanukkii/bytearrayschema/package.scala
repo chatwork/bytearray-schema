@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-package spray
+package tanukkii
 
-package object json {
+package object bytearrayschema {
 
-  type JsField = (String, JsValue)
+  type ByteArrayField = (String, Array[Byte])
 
   def deserializationError(msg: String, cause: Throwable = null, fieldNames: List[String] = Nil) = throw new DeserializationException(msg, cause, fieldNames)
   def serializationError(msg: String) = throw new SerializationException(msg)
 
-  def jsonReader[T](implicit reader: JsonReader[T]) = reader
-  def jsonWriter[T](implicit writer: JsonWriter[T]) = writer 
+  def bytesMapReader[T](implicit reader: BytesMapReader[T]) = reader
+  def bytesMapWriter[T](implicit writer: BytesMapWriter[T]) = writer
   
   implicit def pimpAny[T](any: T) = new PimpedAny(any)
-  implicit def pimpString(string: String) = new PimpedString(string)
+  implicit def pimpMap(map: Map[String, Array[Byte]]) = new PimpedMap(map)
 }
 
-package json {
+package bytearrayschema {
 
   case class DeserializationException(msg: String, cause: Throwable = null, fieldNames: List[String] = Nil) extends RuntimeException(msg, cause)
   class SerializationException(msg: String) extends RuntimeException(msg)
 
-  private[json] class PimpedAny[T](any: T) {
-    def toJson(implicit writer: JsonWriter[T]): JsValue = writer.write(any)
+  private[bytearrayschema] class PimpedAny[T](any: T) {
+    def toBytes(implicit writer: ByteArrayWriter[T]): Array[Byte] = writer.write(any)
+
+    def toBytesMap(implicit writer: BytesMapWriter[T]): Map[String, Array[Byte]] = writer.write(any)
   }
 
-  private[json] class PimpedString(string: String) {
-    @deprecated("deprecated in favor of parseJson", "1.2.6")
-    def asJson: JsValue = parseJson
-    def parseJson: JsValue = JsonParser(string)
+  private[bytearrayschema] class PimpedMap(map: Map[String, Array[Byte]]) {
+    def convertTo[T](implicit reader: BytesMapReader[T]): T = reader.read(map)
   }
 }

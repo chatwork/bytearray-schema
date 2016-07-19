@@ -15,16 +15,14 @@
  * limitations under the License.
  */
 
-package spray.json
+package tanukkii.bytearrayschema
 
 /**
-  * Provides all the predefined JsonFormats.
+  * Provides all the predefined BytesMapFormats.
  */
-trait DefaultJsonProtocol
+trait DefaultBytesMapProtocol
         extends BasicFormats
         with StandardFormats
-        with CollectionFormats
         with ProductFormats
-        with AdditionalFormats
 
-object DefaultJsonProtocol extends DefaultJsonProtocol
+object DefaultBytesMapProtocol extends DefaultBytesMapProtocol

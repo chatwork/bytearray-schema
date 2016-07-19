@@ -14,47 +14,45 @@
  * limitations under the License.
  */
 
-package spray.json
+package tanukkii.bytearrayschema
 
 import java.lang.reflect.Modifier
 import scala.annotation.tailrec
 import scala.util.control.NonFatal
 
 /**
- * Provides the helpers for constructing custom JsonFormat implementations for types implementing the Product trait
+ * Provides the helpers for constructing custom BytesMapFormat implementations for types implementing the Product trait
  * (especially case classes)
  */
 trait ProductFormats extends ProductFormatsInstances {
   this: StandardFormats =>
 
-  def jsonFormat0[T](construct: () => T): RootJsonFormat[T] =
-    new RootJsonFormat[T] {
-      def write(p: T) = JsObject()
-      def read(value: JsValue) = value match {
-        case JsObject(_) => construct()
-        case _ => throw new DeserializationException("Object expected")
-      }
+  def bytesMapFormat0[T](construct: () => T): BytesMapFormat[T] =
+    new BytesMapFormat[T] {
+      def write(p: T) = Map()
+      def read(value: Map[String, Array[Byte]]) = construct()
     }
 
   // helpers
   
-  protected def productElement2Field[T](fieldName: String, p: Product, ix: Int, rest: List[JsField] = Nil)
-                                       (implicit writer: JsonWriter[T]): List[JsField] = {
+  protected def productElement2Field[T](fieldName: String, p: Product, ix: Int, rest: List[ByteArrayField] = Nil)
+                                       (implicit writer: ByteArrayWriter[T]): List[ByteArrayField] = {
     val value = p.productElement(ix).asInstanceOf[T]
     writer match {
-      case _: OptionFormat[_] if (value == None) => rest
+      //case _: OptionFormat[_] if (value == None) => rest
       case _ => (fieldName, writer.write(value)) :: rest
     }
   }
 
-  protected def fromField[T](value: JsValue, fieldName: String)
-                                     (implicit reader: JsonReader[T]) = value match {
-    case x: JsObject if
-      (reader.isInstanceOf[OptionFormat[_]] &
-        !x.fields.contains(fieldName)) =>
+  protected def fromField[T](value: Map[String, Array[Byte]], fieldName: String)
+                                     (implicit reader: ByteArrayReader[T]) = value match {
+    case x if
+    !x.contains(fieldName) =>
+//      (reader.isInstanceOf[OptionFormat[_]] &
+//        !x.contains(fieldName)) =>
       None.asInstanceOf[T]
-    case x: JsObject =>
-      try reader.read(x.fields(fieldName))
+    case x =>
+      try reader.read(x(fieldName))
       catch {
         case e: NoSuchElementException =>
           deserializationError("Object is missing required member '" + fieldName + "'", e, fieldName :: Nil)
@@ -82,7 +80,7 @@ trait ProductFormats extends ProductFormatsInstances {
       fields.map(f => ProductFormats.unmangle(f.getName))
     } catch {
       case NonFatal(ex) => throw new RuntimeException("Cannot automatically determine case class field names and order " +
-        "for '" + clazz.getName + "', please use the 'jsonFormat' overload with explicit field name specification", ex)
+        "for '" + clazz.getName + "', please use the 'bytesMapFormat' overload with explicit field name specification", ex)
     }
   }
 
@@ -133,22 +131,5 @@ object ProductFormats {
       } else if (builder != null) builder.toString else name
     }
     rec(0, null)
-  }
-}
-
-/**
- * This trait supplies an alternative rendering mode for optional case class members.
- * Normally optional members that are undefined (`None`) are not rendered at all.
- * By mixing in this trait into your custom JsonProtocol you can enforce the rendering of undefined members as `null`.
- * (Note that this only affect JSON writing, spray-json will always read missing optional members as well as `null`
- * optional members as `None`.)
- */
-trait NullOptions extends ProductFormats {
-  this: StandardFormats =>
-
-  override protected def productElement2Field[T](fieldName: String, p: Product, ix: Int, rest: List[JsField])
-                                                (implicit writer: JsonWriter[T]) = {
-    val value = p.productElement(ix).asInstanceOf[T]
-    (fieldName, writer.write(value)) :: rest
   }
 }
