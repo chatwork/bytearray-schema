@@ -15,125 +15,82 @@
  * limitations under the License.
  */
 
-package spray.json
+package tanukkii.bytearrayschema
+
+import org.apache.hadoop.hbase.util.Bytes
 
 /**
-  * Provides the JsonFormats for the most important Scala types.
+  * Provides the ByteArrayFormats for the most important Scala types.
  */
 trait BasicFormats {
 
-  implicit object IntJsonFormat extends JsonFormat[Int] {
-    def write(x: Int) = JsNumber(x)
-    def read(value: JsValue) = value match {
-      case JsNumber(x) => x.intValue
-      case x => deserializationError("Expected Int as JsNumber, but got " + x)
-    }
+  implicit object IntByteArrayFormat extends ByteArrayFormat[Int] {
+    def write(x: Int) = Bytes.toBytes(x)
+    def read(value: Array[Byte]) = Bytes.toInt(value)
   }
 
-  implicit object LongJsonFormat extends JsonFormat[Long] {
-    def write(x: Long) = JsNumber(x)
-    def read(value: JsValue) = value match {
-      case JsNumber(x) => x.longValue
-      case x => deserializationError("Expected Long as JsNumber, but got " + x)
-    }
+  implicit object LongByteArrayFormat extends ByteArrayFormat[Long] {
+    def write(x: Long) = Bytes.toBytes(x)
+    def read(value: Array[Byte]) = Bytes.toLong(value)
   }
 
-  implicit object FloatJsonFormat extends JsonFormat[Float] {
-    def write(x: Float) = JsNumber(x)
-    def read(value: JsValue) = value match {
-      case JsNumber(x) => x.floatValue
-      case JsNull      => Float.NaN
-      case x => deserializationError("Expected Float as JsNumber, but got " + x)
-    }
+  implicit object FloatByteArrayFormat extends ByteArrayFormat[Float] {
+    def write(x: Float) = Bytes.toBytes(x)
+    def read(value: Array[Byte]) = Bytes.toFloat(value)
   }
 
-  implicit object DoubleJsonFormat extends JsonFormat[Double] {
-    def write(x: Double) = JsNumber(x)
-    def read(value: JsValue) = value match {
-      case JsNumber(x) => x.doubleValue
-      case JsNull      => Double.NaN
-      case x => deserializationError("Expected Double as JsNumber, but got " + x)
-    }
+  implicit object DoubleByteArrayFormat extends ByteArrayFormat[Double] {
+    def write(x: Double) = Bytes.toBytes(x)
+    def read(value: Array[Byte]) = Bytes.toDouble(value)
   }
 
-  implicit object ByteJsonFormat extends JsonFormat[Byte] {
-    def write(x: Byte) = JsNumber(x)
-    def read(value: JsValue) = value match {
-      case JsNumber(x) => x.byteValue
-      case x => deserializationError("Expected Byte as JsNumber, but got " + x)
-    }
+  implicit object ByteByteArrayFormat extends ByteArrayFormat[Byte] {
+    def write(x: Byte) = Bytes.toBytes(x)
+    def read(value: Array[Byte]) = if (value.length == 1) value.head else deserializationError("Expected one Byte")
   }
   
-  implicit object ShortJsonFormat extends JsonFormat[Short] {
-    def write(x: Short) = JsNumber(x)
-    def read(value: JsValue) = value match {
-      case JsNumber(x) => x.shortValue
-      case x => deserializationError("Expected Short as JsNumber, but got " + x)
-    }
+  implicit object ShortByteArrayFormat extends ByteArrayFormat[Short] {
+    def write(x: Short) = Bytes.toBytes(x)
+    def read(value: Array[Byte]) = Bytes.toShort(value)
   }
 
-  implicit object BigDecimalJsonFormat extends JsonFormat[BigDecimal] {
+  implicit object BigDecimalByteArrayFormat extends ByteArrayFormat[BigDecimal] {
     def write(x: BigDecimal) = {
       require(x ne null)
-      JsNumber(x)
+      Bytes.toBytes(x.underlying())
     }
-    def read(value: JsValue) = value match {
-      case JsNumber(x) => x
-      case JsString(x) => BigDecimal(x)
-      case x => deserializationError("Expected BigDecimal as JsNumber, but got " + x)
-    }
+    def read(value: Array[Byte]) = Bytes.toBigDecimal(value)
   }
 
-  implicit object BigIntJsonFormat extends JsonFormat[BigInt] {
-    def write(x: BigInt) = {
-      require(x ne null)
-      JsNumber(x)
-    }
-    def read(value: JsValue) = value match {
-      case JsNumber(x) => x.toBigInt
-      case JsString(x) => BigInt(x)
-      case x => deserializationError("Expected BigInt as JsNumber, but got " + x)
-    }
+  implicit object UnitByteArrayFormat extends ByteArrayFormat[Unit] {
+    def write(x: Unit) = Bytes.toBytes(1)
+    def read(value: Array[Byte]) {}
   }
 
-  implicit object UnitJsonFormat extends JsonFormat[Unit] {
-    def write(x: Unit) = JsNumber(1)
-    def read(value: JsValue) {}
+  implicit object BooleanByteArrayFormat extends ByteArrayFormat[Boolean] {
+    def write(x: Boolean) = Bytes.toBytes(x)
+    def read(value: Array[Byte]) = Bytes.toBoolean(value)
   }
 
-  implicit object BooleanJsonFormat extends JsonFormat[Boolean] {
-    def write(x: Boolean) = JsBoolean(x)
-    def read(value: JsValue) = value match {
-      case JsTrue => true
-      case JsFalse => false
-      case x => deserializationError("Expected JsBoolean, but got " + x)
-    }
-  }
-
-  implicit object CharJsonFormat extends JsonFormat[Char] {
-    def write(x: Char) = JsString(String.valueOf(x))
-    def read(value: JsValue) = value match {
-      case JsString(x) if x.length == 1 => x.charAt(0)
-      case x => deserializationError("Expected Char as single-character JsString, but got " + x)
+  implicit object CharByteArrayFormat extends ByteArrayFormat[Char] {
+    def write(x: Char) = Bytes.toBytes(x)
+    def read(value: Array[Byte]) = {
+      val s = Bytes.toString(value)
+      if (s.length == 1) s.charAt(0)
+      else deserializationError("Expected Char")
     }
   }
   
-  implicit object StringJsonFormat extends JsonFormat[String] {
+  implicit object StringByteArrayFormat extends ByteArrayFormat[String] {
     def write(x: String) = {
       require(x ne null)
-      JsString(x)
+      Bytes.toBytes(x)
     }
-    def read(value: JsValue) = value match {
-      case JsString(x) => x
-      case x => deserializationError("Expected String as JsString, but got " + x)
-    }
+    def read(value: Array[Byte]) = Bytes.toString(value)
   }
   
-  implicit object SymbolJsonFormat extends JsonFormat[Symbol] {
-    def write(x: Symbol) = JsString(x.name)
-    def read(value: JsValue) = value match {
-      case JsString(x) => Symbol(x)
-      case x => deserializationError("Expected Symbol as JsString, but got " + x)
-    }
+  implicit object SymbolByteArrayFormat extends ByteArrayFormat[Symbol] {
+    def write(x: Symbol) = Bytes.toBytes(x.name)
+    def read(value: Array[Byte]) = Symbol(Bytes.toString(value))
   }
 }

@@ -14,31 +14,72 @@
  * limitations under the License.
  */
 
-package spray.json
+package tanukkii.bytearrayschema
 
+import org.apache.hadoop.hbase.util.Bytes
 import org.specs2.mutable.Specification
 
-class CustomFormatSpec extends Specification with DefaultJsonProtocol {
+class CustomFormatSpec extends Specification with DefaultBytesMapProtocol {
 
   case class MyType(name: String, value: Int)
 
-  implicit val MyTypeProtocol = new RootJsonFormat[MyType] {
-    def read(json: JsValue) = {
-      json.asJsObject.getFields("name", "value") match {
-        case Seq(JsString(name), JsNumber(value)) => MyType(name, value.toInt)
-        case _ => deserializationError("Expected fields: 'name' (JSON string) and 'value' (JSON number)")
-      }
-    }
-    def write(obj: MyType) = JsObject("name" -> JsString(obj.name), "value" -> JsNumber(obj.value))
+  case class OptType(name: String, value: Int, point: Option[Double])
+
+  object MyTypeProtocol extends DefaultBytesMapProtocol {
+    implicit val myTypeByteArrayFormat = bytesMapFormat2(MyType)
+
+    implicit val optTypeByteArrayFormat = bytesMapFormat3(OptType)
   }
 
-  "A custom JsonFormat built with 'asJsonObject'" should {
-    val value = MyType("bob", 42)
-    "correctly deserialize valid JSON content" in {
-      """{ "name": "bob", "value": 42 }""".parseJson.convertTo[MyType] mustEqual value
+  import MyTypeProtocol._
+
+  "DefaultBytesMapProtocol" should {
+
+    "convertTo" in {
+      Map("name" -> Bytes.toBytes("John Doe"), "value" -> Bytes.toBytes(10)).convertTo[MyType] mustEqual MyType("John Doe", 10)
     }
-    "support full round-trip (de)serialization" in {
-      value.toJson.convertTo[MyType] mustEqual value
+
+    "toBytesMap" in {
+      MyType("John Doe", 10).toBytesMap.mapValues(_.toVector) mustEqual Map("name" -> Bytes.toBytes("John Doe").toVector, "value" -> Bytes.toBytes(10).toVector)
+    }
+
+    "convertTo Some" in {
+      Map(
+        "name" -> Bytes.toBytes("John Doe"),
+        "value" -> Bytes.toBytes(10),
+        "point" -> Bytes.toBytes(1.0)
+      ).convertTo[OptType] mustEqual OptType("John Doe", 10, Some(1.0))
+    }
+
+    "convertTo None" in {
+      Map(
+        "name" -> Bytes.toBytes("John Doe"),
+        "value" -> Bytes.toBytes(10)
+      ).convertTo[OptType] mustEqual OptType("John Doe", 10, None)
+    }
+
+    "convertTo None 2" in {
+      Map(
+        "name" -> Bytes.toBytes("John Doe"),
+        "value" -> Bytes.toBytes(10),
+        "point" -> Array.empty[Byte]
+      ).convertTo[OptType] mustEqual OptType("John Doe", 10, None)
+    }
+
+    "toBytesMap Some" in {
+      OptType("John Doe", 10, Some(1.0)).toBytesMap.mapValues(_.toVector) mustEqual Map(
+        "name" -> Bytes.toBytes("John Doe").toVector,
+        "value" -> Bytes.toBytes(10).toVector,
+        "point" -> Bytes.toBytes(1.0).toVector
+      )
+    }
+
+    "toBytesMap None" in {
+      OptType("John Doe", 10, None).toBytesMap.mapValues(_.toVector) mustEqual Map(
+        "name" -> Bytes.toBytes("John Doe").toVector,
+        "value" -> Bytes.toBytes(10).toVector,
+        "point" -> Vector.empty[Byte] // ToDo: omit None property
+      )
     }
   }
 

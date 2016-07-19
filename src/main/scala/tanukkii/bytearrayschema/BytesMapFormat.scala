@@ -15,57 +15,49 @@
  * limitations under the License.
  */
 
-package spray.json
+package tanukkii.bytearrayschema
 
-import annotation.implicitNotFound
+import scala.annotation.implicitNotFound
 
 /**
-  * Provides the JSON deserialization for type T.
+ * Provides the BytesMap deserialization for type T.
  */
-@implicitNotFound(msg = "Cannot find JsonReader or JsonFormat type class for ${T}")
-trait JsonReader[T] {
-  def read(json: JsValue): T
+@implicitNotFound(msg = "Cannot find BytesMapReader or BytesMapFormat type class for ${T}")
+trait BytesMapReader[T] {
+  def read(bytesMap: Map[String, Array[Byte]]): T
 }
 
-object JsonReader {
-  implicit def func2Reader[T](f: JsValue => T): JsonReader[T] = new JsonReader[T] {
-    def read(json: JsValue) = f(json)
+object BytesMapReader {
+  implicit def func2Reader[T](f: Map[String, Array[Byte]] => T): BytesMapReader[T] = new BytesMapReader[T] {
+    def read(bytesMap: Map[String, Array[Byte]]) = f(bytesMap)
   }
 }
 
 /**
-  * Provides the JSON serialization for type T.
+ * Provides the BytesMap serialization for type T.
  */
-@implicitNotFound(msg = "Cannot find JsonWriter or JsonFormat type class for ${T}")
-trait JsonWriter[T] {
-  def write(obj: T): JsValue
+@implicitNotFound(msg = "Cannot find BytesMapWriter or BytesMapFormat type class for ${T}")
+trait BytesMapWriter[T] {
+  def write(obj: T): Map[String, Array[Byte]]
 }
 
-object JsonWriter {
-  implicit def func2Writer[T](f: T => JsValue): JsonWriter[T] = new JsonWriter[T] {
+object BytesMapWriter {
+  implicit def func2Writer[T](f: T => Map[String, Array[Byte]]): BytesMapWriter[T] = new BytesMapWriter[T] {
     def write(obj: T) = f(obj)
   }
 }
 
 /**
-  * Provides the JSON deserialization and serialization for type T.
+  * Provides the BytesMap deserialization and serialization for type T.
  */
-trait JsonFormat[T] extends JsonReader[T] with JsonWriter[T]
+trait BytesMapFormat[T] extends BytesMapReader[T] with BytesMapWriter[T]
 
-/**
- * A special JsonReader capable of reading a legal JSON root object, i.e. either a JSON array or a JSON object.
- */
-@implicitNotFound(msg = "Cannot find RootJsonReader or RootJsonFormat type class for ${T}")
-trait RootJsonReader[T] extends JsonReader[T]
+trait ByteArrayReader[T] {
+  def read(bytes: Array[Byte]): T
+}
 
-/**
- * A special JsonWriter capable of writing a legal JSON root object, i.e. either a JSON array or a JSON object.
- */
-@implicitNotFound(msg = "Cannot find RootJsonWriter or RootJsonFormat type class for ${T}")
-trait RootJsonWriter[T] extends JsonWriter[T]
+trait ByteArrayWriter[T] {
+  def write(obj: T): Array[Byte]
+}
 
-/**
- * A special JsonFormat signaling that the format produces a legal JSON root object, i.e. either a JSON array
- * or a JSON object.
- */
-trait RootJsonFormat[T] extends JsonFormat[T] with RootJsonReader[T] with RootJsonWriter[T]
+trait ByteArrayFormat[T] extends ByteArrayReader[T] with ByteArrayWriter[T]
