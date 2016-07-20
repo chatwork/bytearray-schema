@@ -16,11 +16,12 @@
  */
 
 package tanukkii.bytearrayschema
+package hbase
 
 /**
   * Provides all the predefined BytesMapFormats.
- */
-trait DefaultBytesMapProtocol
-        extends BasicFormats
-        with StandardFormats
-        with ProductFormats
+  */
+
+trait HBaseDefaultBytesMapProtocol extends DefaultBytesMapProtocol with HBaseBasicFormats
+
+object HBaseDefaultBytesMapProtocol extends HBaseDefaultBytesMapProtocol

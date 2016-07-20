@@ -16,8 +16,6 @@ val commonSettings = Seq(
 lazy val bytearraySchema = (project in file("bytearray-schema")).settings(
   commonSettings ++ Seq(
     libraryDependencies ++= Seq(
-      "org.apache.hadoop" % "hadoop-common" % "2.6.2",
-      "org.apache.hbase" % "hbase-common" % "1.1.4",
       "org.specs2" %% "specs2-core" % "3.8.4" % "test",
       "org.specs2" %% "specs2-scalacheck" % "3.8.4" % "test",
       "org.scalacheck" %% "scalacheck" % "1.13.1" % "test"
@@ -28,8 +26,9 @@ lazy val bytearraySchema = (project in file("bytearray-schema")).settings(
 lazy val bytearraySchemaHBase = (project in file("bytearray-schema-hbase")).settings(
   commonSettings ++ Seq(
     libraryDependencies ++= Seq(
-      "org.apache.hadoop" % "hadoop-common" % "2.6.2",
-      "org.apache.hbase" % "hbase-common" % "1.1.4"
+      "org.apache.hadoop" % "hadoop-common" % "2.6.2" % "provided",
+      "org.apache.hbase" % "hbase-common" % "1.1.4" % "provided",
+      "org.specs2" %% "specs2-core" % "3.8.4" % "test"
     )
   )
 ).dependsOn(bytearraySchema)
