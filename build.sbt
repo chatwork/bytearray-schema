@@ -15,6 +15,7 @@ val commonSettings = Seq(
 
 lazy val bytearraySchema = (project in file("bytearray-schema")).settings(
   commonSettings ++ Seq(
+    name := "bytearray-schema",
     libraryDependencies ++= Seq(
       "org.specs2" %% "specs2-core" % "3.8.4" % "test",
       "org.specs2" %% "specs2-scalacheck" % "3.8.4" % "test",
@@ -25,6 +26,7 @@ lazy val bytearraySchema = (project in file("bytearray-schema")).settings(
 ).settings(Boilerplate.settings).enablePlugins(BintrayPlugin)
 
 lazy val bytearraySchemaHBase = (project in file("bytearray-schema-hbase")).settings(
+  name := "bytearray-schema-hbase",
   commonSettings ++ Seq(
     libraryDependencies ++= Seq(
       "org.apache.hadoop" % "hadoop-common" % "2.6.2" % "provided",
