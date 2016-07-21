@@ -22,6 +22,6 @@ package hbase
   * Provides all the predefined BytesMapFormats.
   */
 
-trait HBaseDefaultBytesMapProtocol extends DefaultBytesMapProtocol with HBaseBasicFormats
+trait HBaseBytesMapProtocol extends DefaultBytesMapProtocol with HBaseBasicFormats
 
-object HBaseDefaultBytesMapProtocol extends HBaseDefaultBytesMapProtocol
+object HBaseBytesMapProtocol extends HBaseBytesMapProtocol

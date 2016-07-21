@@ -27,7 +27,7 @@ class HBaseCustomFormatSpec extends Specification {
 
   case class OptType(name: String, value: Int, point: Option[Double])
 
-  object MyTypeProtocol extends HBaseDefaultBytesMapProtocol {
+  object MyTypeProtocol extends HBaseBytesMapProtocol {
     implicit val myTypeByteArrayFormat = bytesMapFormat2(MyType)
 
     implicit val optTypeByteArrayFormat = bytesMapFormat3(OptType)
