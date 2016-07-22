@@ -1,4 +1,8 @@
-lazy val root = (project in file(".")).aggregate(bytearraySchema, bytearraySchemaHBase)
+lazy val root = (project in file("."))
+  .settings(
+    publish := (),
+    publishArtifact in Compile := false
+  ).aggregate(bytearraySchema, bytearraySchemaHBase)
 
 val commonSettings = Seq(
   version := "0.1.0",
