@@ -39,7 +39,7 @@ trait ProductFormats extends ProductFormatsInstances {
                                        (implicit writer: ByteArrayWriter[T]): List[ByteArrayField] = {
     val value = p.productElement(ix).asInstanceOf[T]
     writer match {
-      //case _: OptionFormat[_] if (value == None) => rest
+      case _: OptionFormat[_] if (value == None) => rest
       case _ => (fieldName, writer.write(value)) :: rest
     }
   }
@@ -47,9 +47,8 @@ trait ProductFormats extends ProductFormatsInstances {
   protected def fromField[T](value: Map[String, Array[Byte]], fieldName: String)
                                      (implicit reader: ByteArrayReader[T]) = value match {
     case x if
-    !x.contains(fieldName) =>
-//      (reader.isInstanceOf[OptionFormat[_]] &
-//        !x.contains(fieldName)) =>
+      (reader.isInstanceOf[OptionFormat[_]] &
+        !x.contains(fieldName)) =>
       None.asInstanceOf[T]
     case x =>
       try reader.read(x(fieldName))

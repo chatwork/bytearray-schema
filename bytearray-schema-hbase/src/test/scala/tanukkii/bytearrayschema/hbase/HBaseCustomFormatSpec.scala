@@ -68,6 +68,13 @@ class HBaseCustomFormatSpec extends Specification {
       ).convertTo[OptType] mustEqual OptType("John Doe", 10, None)
     }
 
+    "convertTo None 3" in {
+      Map(
+        "name" -> Bytes.toBytes("John Doe"),
+        "value" -> Bytes.toBytes(10)
+      ).convertTo[OptType] mustEqual OptType("John Doe", 10, None)
+    }
+
     "toBytesMap Some" in {
       OptType("John Doe", 10, Some(1.0)).toBytesMap.mapValues(_.toVector) mustEqual Map(
         "name" -> Bytes.toBytes("John Doe").toVector,
@@ -79,8 +86,7 @@ class HBaseCustomFormatSpec extends Specification {
     "toBytesMap None" in {
       OptType("John Doe", 10, None).toBytesMap.mapValues(_.toVector) mustEqual Map(
         "name" -> Bytes.toBytes("John Doe").toVector,
-        "value" -> Bytes.toBytes(10).toVector,
-        "point" -> Vector.empty[Byte] // ToDo: omit None property
+        "value" -> Bytes.toBytes(10).toVector
       )
     }
   }

@@ -127,6 +127,13 @@ class CustomFormatSpec extends Specification {
       ).convertTo[OptType] mustEqual OptType("John Doe", 10, None)
     }
 
+    "convertTo None 3" in {
+      Map(
+        "name" -> "John Doe".getBytes,
+        "value" -> 10.toString.getBytes
+      ).convertTo[OptType] mustEqual OptType("John Doe", 10, None)
+    }
+
     "toBytesMap Some" in {
       OptType("John Doe", 10, Some(1.0)).toBytesMap.mapValues(_.toVector) mustEqual Map(
         "name" -> "John Doe".getBytes.toVector,
@@ -138,8 +145,7 @@ class CustomFormatSpec extends Specification {
     "toBytesMap None" in {
       OptType("John Doe", 10, None).toBytesMap.mapValues(_.toVector) mustEqual Map(
         "name" -> "John Doe".getBytes.toVector,
-        "value" -> 10.toString.getBytes.toVector,
-        "point" -> Vector.empty[Byte] // ToDo: omit None property
+        "value" -> 10.toString.getBytes.toVector
       )
     }
   }
