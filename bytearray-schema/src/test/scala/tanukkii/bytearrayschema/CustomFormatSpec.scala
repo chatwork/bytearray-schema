@@ -100,6 +100,15 @@ class CustomFormatSpec extends Specification {
       Map("name" -> "John Doe".getBytes, "value" -> 10.toString.getBytes).convertTo[MyType] mustEqual MyType("John Doe", 10)
     }
 
+    "not convert empty BytesMap" in {
+      val errorMessage = try {
+        Map.empty[String, Array[Byte]].convertTo[MyType]
+      } catch {
+        case e: EmptyBytesMapException => e.getMessage
+      }
+      errorMessage mustEqual "BytesMap is empty. It should contain fields: name, value"
+    }
+
     "toBytesMap" in {
       MyType("John Doe", 10).toBytesMap.mapValues(_.toVector) mustEqual Map("name" -> "John Doe".getBytes().toVector, "value" -> 10.toString.getBytes().toVector)
     }

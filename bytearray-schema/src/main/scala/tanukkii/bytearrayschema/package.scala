@@ -34,6 +34,7 @@ package bytearrayschema {
 
   case class DeserializationException(msg: String, cause: Throwable = null, fieldNames: List[String] = Nil) extends RuntimeException(msg, cause)
   class SerializationException(msg: String) extends RuntimeException(msg)
+  class EmptyBytesMapException(fieldNames: List[String]) extends RuntimeException(s"BytesMap is empty. It should contain fields: ${fieldNames.mkString(", ")}")
 
   private[bytearrayschema] class PimpedAny[T](any: T) {
     def toBytes(implicit writer: ByteArrayWriter[T]): Array[Byte] = writer.write(any)
