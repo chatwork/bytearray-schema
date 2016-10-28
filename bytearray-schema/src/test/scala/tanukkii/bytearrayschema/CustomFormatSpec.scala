@@ -100,6 +100,10 @@ class CustomFormatSpec extends Specification {
       Map("name" -> "John Doe".getBytes, "value" -> 10.toString.getBytes).convertTo[MyType] mustEqual MyType("John Doe", 10)
     }
 
+    "convertTo from mutable.Map" in {
+      scala.collection.mutable.Map("name" -> "John Doe".getBytes, "value" -> 10.toString.getBytes).convertTo[MyType] mustEqual MyType("John Doe", 10)
+    }
+
     "not convert empty BytesMap" in {
       val errorMessage = try {
         Map.empty[String, Array[Byte]].convertTo[MyType]

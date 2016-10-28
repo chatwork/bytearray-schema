@@ -28,6 +28,7 @@ package object bytearrayschema {
   
   implicit def pimpAny[T](any: T) = new PimpedAny(any)
   implicit def pimpMap(map: Map[String, Array[Byte]]) = new PimpedMap(map)
+  implicit def pimpMutableMap(map: scala.collection.mutable.Map[String, Array[Byte]]) = new PimpedMutableMap(map)
 }
 
 package bytearrayschema {
@@ -44,5 +45,9 @@ package bytearrayschema {
 
   private[bytearrayschema] class PimpedMap(map: Map[String, Array[Byte]]) {
     def convertTo[T](implicit reader: BytesMapReader[T]): T = reader.read(map)
+  }
+
+  private[bytearrayschema] class PimpedMutableMap(map: scala.collection.mutable.Map[String, Array[Byte]]) {
+    def convertTo[T](implicit reader: MutableBytesMapReader[T]): T = reader.readMutable(map)
   }
 }

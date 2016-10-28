@@ -31,6 +31,7 @@ trait ProductFormats extends ProductFormatsInstances {
     new BytesMapFormat[T] {
       def write(p: T) = Map()
       def read(value: Map[String, Array[Byte]]) = construct()
+      def readMutable(value: scala.collection.mutable.Map[String, Array[Byte]]) = construct()
     }
 
   // helpers
@@ -49,6 +50,23 @@ trait ProductFormats extends ProductFormatsInstances {
     case x if
       (reader.isInstanceOf[OptionFormat[_]] &
         !x.contains(fieldName)) =>
+      None.asInstanceOf[T]
+    case x =>
+      try reader.read(x(fieldName))
+      catch {
+        case e: NoSuchElementException =>
+          deserializationError("Object is missing required member '" + fieldName + "'", e, fieldName :: Nil)
+        case DeserializationException(msg, cause, fieldNames) =>
+          deserializationError(msg, cause, fieldName :: fieldNames)
+      }
+    case _ => deserializationError("Object expected in field '" + fieldName + "'", fieldNames = fieldName :: Nil)
+  }
+
+  protected def fromField[T](value: scala.collection.mutable.Map[String, Array[Byte]], fieldName: String)
+                            (implicit reader: ByteArrayReader[T]) = value match {
+    case x if
+    (reader.isInstanceOf[OptionFormat[_]] &
+      !x.contains(fieldName)) =>
       None.asInstanceOf[T]
     case x =>
       try reader.read(x(fieldName))

@@ -41,6 +41,10 @@ class HBaseCustomFormatSpec extends Specification {
       Map("name" -> Bytes.toBytes("John Doe"), "value" -> Bytes.toBytes(10)).convertTo[MyType] mustEqual MyType("John Doe", 10)
     }
 
+    "convertTo from mutable.Map" in {
+      scala.collection.mutable.Map("name" -> Bytes.toBytes("John Doe"), "value" -> Bytes.toBytes(10)).convertTo[MyType] mustEqual MyType("John Doe", 10)
+    }
+
     "toBytesMap" in {
       MyType("John Doe", 10).toBytesMap.mapValues(_.toVector) mustEqual Map("name" -> Bytes.toBytes("John Doe").toVector, "value" -> Bytes.toBytes(10).toVector)
     }

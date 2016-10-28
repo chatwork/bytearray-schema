@@ -33,6 +33,17 @@ object BytesMapReader {
   }
 }
 
+@implicitNotFound(msg = "Cannot find MutableBytesMapReader or BytesMapFormat type class for ${T}")
+trait MutableBytesMapReader[T] {
+  def readMutable(bytesMap: scala.collection.mutable.Map[String, Array[Byte]]): T
+}
+
+object MutableBytesMapReader {
+  implicit def func2Reader[T](f: scala.collection.mutable.Map[String, Array[Byte]] => T): MutableBytesMapReader[T] = new MutableBytesMapReader[T] {
+    def readMutable(bytesMap: scala.collection.mutable.Map[String, Array[Byte]]) = f(bytesMap)
+  }
+}
+
 /**
  * Provides the BytesMap serialization for type T.
  */
@@ -50,7 +61,7 @@ object BytesMapWriter {
 /**
   * Provides the BytesMap deserialization and serialization for type T.
  */
-trait BytesMapFormat[T] extends BytesMapReader[T] with BytesMapWriter[T]
+trait BytesMapFormat[T] extends BytesMapReader[T] with BytesMapWriter[T] with MutableBytesMapReader[T]
 
 trait ByteArrayReader[T] {
   def read(bytes: Array[Byte]): T
