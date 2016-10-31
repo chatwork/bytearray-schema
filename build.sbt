@@ -5,7 +5,6 @@ lazy val root = (project in file("."))
   ).aggregate(bytearraySchema, bytearraySchemaHBase)
 
 val commonSettings = Seq(
-  version := "0.1.1",
   organization := "github.com/TanUkkii007",
   description := "schemaless byte array complex to Scala type coversion",
   homepage := Some(new URL("https://github.com/TanUkkii007/bytearray-schema")),
