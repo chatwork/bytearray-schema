@@ -11,6 +11,7 @@ val commonSettings = Seq(
   startYear := Some(2016),
   licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalaVersion := "2.11.8",
+  crossScalaVersions := Seq("2.10.6", "2.11.8"),
   scalacOptions ++= Seq("-feature", "-language:_", "-unchecked", "-deprecation", "-encoding", "utf8"),
   resolvers += Opts.resolver.sonatypeReleases,
   (scalacOptions in doc) ++= Seq("-doc-title", name.value + " " + version.value)
