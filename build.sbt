@@ -2,7 +2,8 @@ lazy val root = (project in file("."))
   .settings(
     publish := (),
     publishArtifact in Compile := false,
-    releaseCrossBuild := true
+    releaseCrossBuild := true,
+    crossScalaVersions := Seq("2.10.6", "2.11.8")
   ).aggregate(bytearraySchema, bytearraySchemaHBase)
 
 val commonSettings = Seq(
