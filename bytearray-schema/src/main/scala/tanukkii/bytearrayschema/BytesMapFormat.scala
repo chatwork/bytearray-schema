@@ -29,7 +29,7 @@ trait BytesMapReader[T] {
 
 object BytesMapReader {
   implicit def func2Reader[T](f: Map[String, Array[Byte]] => T): BytesMapReader[T] = new BytesMapReader[T] {
-    def read(bytesMap: Map[String, Array[Byte]]) = f(bytesMap)
+    def read(bytesMap: Map[String, Array[Byte]]): T = f(bytesMap)
   }
 }
 
@@ -40,7 +40,7 @@ trait MutableBytesMapReader[T] {
 
 object MutableBytesMapReader {
   implicit def func2Reader[T](f: scala.collection.mutable.Map[String, Array[Byte]] => T): MutableBytesMapReader[T] = new MutableBytesMapReader[T] {
-    def readMutable(bytesMap: scala.collection.mutable.Map[String, Array[Byte]]) = f(bytesMap)
+    def readMutable(bytesMap: scala.collection.mutable.Map[String, Array[Byte]]): T = f(bytesMap)
   }
 }
 
@@ -54,7 +54,7 @@ trait BytesMapWriter[T] {
 
 object BytesMapWriter {
   implicit def func2Writer[T](f: T => Map[String, Array[Byte]]): BytesMapWriter[T] = new BytesMapWriter[T] {
-    def write(obj: T) = f(obj)
+    def write(obj: T): Map[String, Array[Byte]] = f(obj)
   }
 }
 

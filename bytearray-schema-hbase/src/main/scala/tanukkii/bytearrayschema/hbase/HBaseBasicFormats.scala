@@ -26,56 +26,56 @@ import org.apache.hadoop.hbase.util.Bytes
 trait HBaseBasicFormats extends BasicFormats {
 
   implicit object IntByteArrayFormat extends ByteArrayFormat[Int] {
-    def write(x: Int) = Bytes.toBytes(x)
-    def read(value: Array[Byte]) = Bytes.toInt(value)
+    def write(x: Int): Array[Byte] = Bytes.toBytes(x)
+    def read(value: Array[Byte]): Int = Bytes.toInt(value)
   }
 
   implicit object LongByteArrayFormat extends ByteArrayFormat[Long] {
-    def write(x: Long) = Bytes.toBytes(x)
-    def read(value: Array[Byte]) = Bytes.toLong(value)
+    def write(x: Long): Array[Byte] = Bytes.toBytes(x)
+    def read(value: Array[Byte]): Long = Bytes.toLong(value)
   }
 
   implicit object FloatByteArrayFormat extends ByteArrayFormat[Float] {
-    def write(x: Float) = Bytes.toBytes(x)
-    def read(value: Array[Byte]) = Bytes.toFloat(value)
+    def write(x: Float): Array[Byte] = Bytes.toBytes(x)
+    def read(value: Array[Byte]): Float = Bytes.toFloat(value)
   }
 
   implicit object DoubleByteArrayFormat extends ByteArrayFormat[Double] {
-    def write(x: Double) = Bytes.toBytes(x)
-    def read(value: Array[Byte]) = Bytes.toDouble(value)
+    def write(x: Double): Array[Byte] = Bytes.toBytes(x)
+    def read(value: Array[Byte]): Double = Bytes.toDouble(value)
   }
 
   implicit object ByteByteArrayFormat extends ByteArrayFormat[Byte] {
-    def write(x: Byte) = Bytes.toBytes(x)
-    def read(value: Array[Byte]) = if (value.length == 1) value.head else deserializationError("Expected one Byte")
+    def write(x: Byte): Array[Byte] = Bytes.toBytes(x)
+    def read(value: Array[Byte]): Byte = if (value.length == 1) value.head else deserializationError("Expected one Byte")
   }
 
   implicit object ShortByteArrayFormat extends ByteArrayFormat[Short] {
-    def write(x: Short) = Bytes.toBytes(x)
-    def read(value: Array[Byte]) = Bytes.toShort(value)
+    def write(x: Short): Array[Byte] = Bytes.toBytes(x)
+    def read(value: Array[Byte]): Short = Bytes.toShort(value)
   }
 
   implicit object BigDecimalByteArrayFormat extends ByteArrayFormat[BigDecimal] {
-    def write(x: BigDecimal) = {
+    def write(x: BigDecimal): Array[Byte] = {
       require(x ne null)
       Bytes.toBytes(x.underlying())
     }
-    def read(value: Array[Byte]) = Bytes.toBigDecimal(value)
+    def read(value: Array[Byte]): BigDecimal = Bytes.toBigDecimal(value)
   }
 
   implicit object UnitByteArrayFormat extends ByteArrayFormat[Unit] {
-    def write(x: Unit) = Bytes.toBytes(1)
-    def read(value: Array[Byte]) {}
+    def write(x: Unit): Array[Byte] = Bytes.toBytes(1)
+    def read(value: Array[Byte]): Unit = ()
   }
 
   implicit object BooleanByteArrayFormat extends ByteArrayFormat[Boolean] {
-    def write(x: Boolean) = Bytes.toBytes(x)
-    def read(value: Array[Byte]) = Bytes.toBoolean(value)
+    def write(x: Boolean): Array[Byte] = Bytes.toBytes(x)
+    def read(value: Array[Byte]): Boolean = Bytes.toBoolean(value)
   }
 
   implicit object CharByteArrayFormat extends ByteArrayFormat[Char] {
-    def write(x: Char) = Bytes.toBytes(x)
-    def read(value: Array[Byte]) = {
+    def write(x: Char): Array[Byte] = Bytes.toBytes(x)
+    def read(value: Array[Byte]): Char = {
       val s = Bytes.toString(value)
       if (s.length == 1) s.charAt(0)
       else deserializationError("Expected Char")
@@ -83,15 +83,15 @@ trait HBaseBasicFormats extends BasicFormats {
   }
 
   implicit object StringByteArrayFormat extends ByteArrayFormat[String] {
-    def write(x: String) = {
+    def write(x: String): Array[Byte] = {
       require(x ne null)
       Bytes.toBytes(x)
     }
-    def read(value: Array[Byte]) = Bytes.toString(value)
+    def read(value: Array[Byte]): String = Bytes.toString(value)
   }
 
   implicit object SymbolByteArrayFormat extends ByteArrayFormat[Symbol] {
-    def write(x: Symbol) = Bytes.toBytes(x.name)
-    def read(value: Array[Byte]) = Symbol(Bytes.toString(value))
+    def write(x: Symbol): Array[Byte] = Bytes.toBytes(x.name)
+    def read(value: Array[Byte]): Symbol = Symbol(Bytes.toString(value))
   }
 }
