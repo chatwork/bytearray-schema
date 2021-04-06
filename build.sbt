@@ -1,9 +1,12 @@
+val scala211Version = "2.11.8"
+val scala212Version = "2.12.2"
+
 lazy val root = (project in file("."))
   .settings(
     publish := (),
     publishArtifact in Compile := false,
     releaseCrossBuild := true,
-    crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.2")
+    crossScalaVersions := Seq(scala211Version, scala212Version)
   ).aggregate(bytearraySchema, bytearraySchemaHBase)
 
 val commonSettings = Seq(
@@ -13,7 +16,7 @@ val commonSettings = Seq(
   startYear := Some(2016),
   licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.2"),
+  crossScalaVersions := Seq(scala211Version, scala212Version),
   releaseCrossBuild := true,
   scalacOptions ++= Seq("-feature", "-language:_", "-unchecked", "-deprecation", "-encoding", "utf8"),
   resolvers += Opts.resolver.sonatypeReleases,
