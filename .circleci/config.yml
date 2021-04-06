@@ -1,0 +1,35 @@
+version: 2.1
+
+workflows:
+   build_and_test:
+     jobs:
+       - scala:
+           name: Scala 2.10.x
+           scala_version: 2.10.6
+       - scala:
+           name: Scala 2.11.x
+           scala_version: 2.11.8
+       - scala:
+           name: Scala 2.12.x
+           scala_version: 2.12.2
+
+jobs:
+  scala:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      TERM: "dumb"
+    parameters:
+      scala_version:
+        type: string
+    steps:
+      - checkout
+      - restore_cache:
+          key: scala-{{ checksum "build.sbt" }}-{{ checksum "project/plugins.sbt" }}-{{ checksum "project/build.properties" }}
+      - run:
+          name: Test
+          command: |
+            sbt ++<<parameters.scala_version>> test
+      - save_cache:
+          paths: [ "~/.m2", "~/.ivy2", "~/.cache/coursier" ]
+          key: scala-{{ checksum "build.sbt" }}-{{ checksum "project/plugins.sbt" }}-{{ checksum "project/build.properties" }}
