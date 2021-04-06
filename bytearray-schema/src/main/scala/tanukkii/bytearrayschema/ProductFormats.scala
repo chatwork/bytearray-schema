@@ -19,6 +19,7 @@ package tanukkii.bytearrayschema
 import java.lang.reflect.Modifier
 import scala.annotation.tailrec
 import scala.util.control.NonFatal
+import scala.reflect.ClassTag
 
 /**
  * Provides the helpers for constructing custom BytesMapFormat implementations for types implementing the Product trait
@@ -59,7 +60,6 @@ trait ProductFormats extends ProductFormatsInstances {
         case DeserializationException(msg, cause, fieldNames) =>
           deserializationError(msg, cause, fieldName :: fieldNames)
       }
-    case _ => deserializationError("Object expected in field '" + fieldName + "'", fieldNames = fieldName :: Nil)
   }
 
   protected def fromField[T](value: scala.collection.mutable.Map[String, Array[Byte]], fieldName: String)
@@ -76,11 +76,10 @@ trait ProductFormats extends ProductFormatsInstances {
         case DeserializationException(msg, cause, fieldNames) =>
           deserializationError(msg, cause, fieldName :: fieldNames)
       }
-    case _ => deserializationError("Object expected in field '" + fieldName + "'", fieldNames = fieldName :: Nil)
   }
 
-  protected def extractFieldNames(classManifest: ClassManifest[_]): Array[String] = {
-    val clazz = classManifest.erasure
+  protected def extractFieldNames(classTag: ClassTag[_]): Array[String] = {
+    val clazz = classTag.runtimeClass
     try {
       // copy methods have the form copy$default$N(), we need to sort them in order, but must account for the fact
       // that lexical sorting of ...8(), ...9(), ...10() is not correct, so we extract N and sort by N.toInt

@@ -16,11 +16,13 @@
 
 package tanukkii.bytearrayschema
 
+import scala.reflect.ClassTag
+
 trait ProductFormatsInstances { self: ProductFormats with StandardFormats =>
 [#  // Case classes with 1 parameters
 
-  def bytesMapFormat1[[#P1 :JF#], T <: Product :ClassManifest](construct: ([#P1#]) => T): BytesMapFormat[T] = {
-    val Array([#p1#]) = extractFieldNames(classManifest[T])
+  def bytesMapFormat1[[#P1 :JF#], T <: Product](construct: ([#P1#]) => T)(implicit m: ClassTag[T]): BytesMapFormat[T] = {
+    val Array([#p1#]) = extractFieldNames(m)
     bytesMapFormat(construct, [#p1#])
   }
   def bytesMapFormat[[#P1 :JF#], T <: Product](construct: ([#P1#]) => T, [#fieldName1: String#]): BytesMapFormat[T] = new BytesMapFormat[T]{
