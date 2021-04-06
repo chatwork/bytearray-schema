@@ -31,12 +31,10 @@ class CustomFormatSpec extends AnyFunSuite {
   }
 
   test("not convert empty BytesMap") {
-    val errorMessage = try {
+    val ex = intercept[EmptyBytesMapException] {
       Map.empty[String, Array[Byte]].convertTo[MyType]
-    } catch {
-      case e: EmptyBytesMapException => e.getMessage
     }
-    assert(errorMessage === "BytesMap is empty. It should contain fields: name, value")
+    assert(ex.getMessage === "BytesMap is empty. It should contain fields: name, value")
   }
 
   test("toBytesMap") {
