@@ -60,7 +60,6 @@ trait ProductFormats extends ProductFormatsInstances {
         case DeserializationException(msg, cause, fieldNames) =>
           deserializationError(msg, cause, fieldName :: fieldNames)
       }
-    case _ => deserializationError("Object expected in field '" + fieldName + "'", fieldNames = fieldName :: Nil)
   }
 
   protected def fromField[T](value: scala.collection.mutable.Map[String, Array[Byte]], fieldName: String)
@@ -77,7 +76,6 @@ trait ProductFormats extends ProductFormatsInstances {
         case DeserializationException(msg, cause, fieldNames) =>
           deserializationError(msg, cause, fieldName :: fieldNames)
       }
-    case _ => deserializationError("Object expected in field '" + fieldName + "'", fieldNames = fieldName :: Nil)
   }
 
   protected def extractFieldNames(classTag: ClassTag[_]): Array[String] = {
