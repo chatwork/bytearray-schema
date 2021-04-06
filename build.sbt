@@ -1,10 +1,12 @@
+import spray.boilerplate.BoilerplatePlugin
+
 val scala211Version = "2.11.8"
 val scala212Version = "2.12.2"
 
 lazy val root = (project in file("."))
   .settings(
-    publish := (),
-    publishArtifact in Compile := false,
+    publish := {},
+    Compile / publishArtifact := false,
     releaseCrossBuild := true,
     crossScalaVersions := Seq(scala211Version, scala212Version)
   ).aggregate(bytearraySchema, bytearraySchemaHBase)
@@ -20,7 +22,6 @@ val commonSettings = Seq(
   releaseCrossBuild := true,
   scalacOptions ++= Seq("-feature", "-language:_", "-unchecked", "-deprecation", "-encoding", "utf8"),
   resolvers += Opts.resolver.sonatypeReleases,
-  (scalacOptions in doc) ++= Seq("-doc-title", name.value + " " + version.value)
 )
 
 lazy val bytearraySchema = (project in file("bytearray-schema")).settings(
@@ -32,7 +33,7 @@ lazy val bytearraySchema = (project in file("bytearray-schema")).settings(
       "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
     )
   )
-).settings(Boilerplate.settings)
+).enablePlugins(BoilerplatePlugin)
 
 lazy val bytearraySchemaHBase = (project in file("bytearray-schema-hbase")).settings(
   name := "bytearray-schema-hbase",
