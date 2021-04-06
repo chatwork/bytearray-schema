@@ -25,29 +25,22 @@ package object bytearrayschema {
 
   def bytesMapReader[T](implicit reader: BytesMapReader[T]): BytesMapReader[T] = reader
   def bytesMapWriter[T](implicit writer: BytesMapWriter[T]): BytesMapWriter[T] = writer
-  
-  implicit def pimpAny[T](any: T) = new PimpedAny(any)
-  implicit def pimpMap(map: Map[String, Array[Byte]]) = new PimpedMap(map)
-  implicit def pimpMutableMap(map: scala.collection.mutable.Map[String, Array[Byte]]) = new PimpedMutableMap(map)
-}
 
-package bytearrayschema {
-
-  case class DeserializationException(msg: String, cause: Throwable = null, fieldNames: List[String] = Nil) extends RuntimeException(msg, cause)
-  class SerializationException(msg: String) extends RuntimeException(msg)
-  class EmptyBytesMapException(fieldNames: List[String]) extends RuntimeException(s"BytesMap is empty. It should contain fields: ${fieldNames.mkString(", ")}")
-
-  private[bytearrayschema] class PimpedAny[T](any: T) {
+  implicit final class AnyOps[T](private val any: T) extends AnyVal {
     def toBytes(implicit writer: ByteArrayWriter[T]): Array[Byte] = writer.write(any)
 
     def toBytesMap(implicit writer: BytesMapWriter[T]): Map[String, Array[Byte]] = writer.write(any)
   }
 
-  private[bytearrayschema] class PimpedMap(map: Map[String, Array[Byte]]) {
+  implicit final class MapOps(private val map: Map[String, Array[Byte]]) extends AnyVal {
     def convertTo[T](implicit reader: BytesMapReader[T]): T = reader.read(map)
   }
 
-  private[bytearrayschema] class PimpedMutableMap(map: scala.collection.mutable.Map[String, Array[Byte]]) {
+  implicit final class MutableMapOps(private val map: scala.collection.mutable.Map[String, Array[Byte]]) extends AnyVal {
     def convertTo[T](implicit reader: MutableBytesMapReader[T]): T = reader.readMutable(map)
   }
+
+  case class DeserializationException(msg: String, cause: Throwable = null, fieldNames: List[String] = Nil) extends RuntimeException(msg, cause)
+  class SerializationException(msg: String) extends RuntimeException(msg)
+  class EmptyBytesMapException(fieldNames: List[String]) extends RuntimeException(s"BytesMap is empty. It should contain fields: ${fieldNames.mkString(", ")}")
 }
