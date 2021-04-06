@@ -30,10 +30,9 @@ lazy val bytearraySchema = (project in file("bytearray-schema")).settings(
       "org.specs2" %% "specs2-core" % "3.9.1" % "test",
       "org.specs2" %% "specs2-scalacheck" % "3.9.1" % "test",
       "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
-    ),
-    BintrayPlugin.autoImport.bintrayPackage := "bytearray-schema"
+    )
   )
-).settings(Boilerplate.settings).enablePlugins(BintrayPlugin)
+).settings(Boilerplate.settings)
 
 lazy val bytearraySchemaHBase = (project in file("bytearray-schema-hbase")).settings(
   name := "bytearray-schema-hbase",
@@ -42,7 +41,6 @@ lazy val bytearraySchemaHBase = (project in file("bytearray-schema-hbase")).sett
       "org.apache.hadoop" % "hadoop-common" % "2.6.2" % "provided",
       "org.apache.hbase" % "hbase-common" % "1.1.4" % "provided",
       "org.specs2" %% "specs2-core" % "3.9.1" % "test"
-    ),
-    BintrayPlugin.autoImport.bintrayPackage := "bytearray-schema-hbase"
+    )
   )
-).dependsOn(bytearraySchema).enablePlugins(BintrayPlugin)
+).dependsOn(bytearraySchema)
