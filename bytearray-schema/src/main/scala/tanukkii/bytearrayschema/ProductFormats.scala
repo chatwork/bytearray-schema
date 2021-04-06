@@ -30,9 +30,9 @@ trait ProductFormats extends ProductFormatsInstances {
 
   def bytesMapFormat0[T](construct: () => T): BytesMapFormat[T] =
     new BytesMapFormat[T] {
-      def write(p: T) = Map()
-      def read(value: Map[String, Array[Byte]]) = construct()
-      def readMutable(value: scala.collection.mutable.Map[String, Array[Byte]]) = construct()
+      def write(p: T): Map[String, Nothing] = Map.empty
+      def read(value: Map[String, Array[Byte]]): T = construct()
+      def readMutable(value: scala.collection.mutable.Map[String, Array[Byte]]): T = construct()
     }
 
   // helpers
@@ -47,7 +47,7 @@ trait ProductFormats extends ProductFormatsInstances {
   }
 
   protected def fromField[T](value: Map[String, Array[Byte]], fieldName: String)
-                                     (implicit reader: ByteArrayReader[T]) = value match {
+                                     (implicit reader: ByteArrayReader[T]): T = value match {
     case x if
       (reader.isInstanceOf[OptionFormat[_]] &
         !x.contains(fieldName)) =>
@@ -63,7 +63,7 @@ trait ProductFormats extends ProductFormatsInstances {
   }
 
   protected def fromField[T](value: scala.collection.mutable.Map[String, Array[Byte]], fieldName: String)
-                            (implicit reader: ByteArrayReader[T]) = value match {
+                            (implicit reader: ByteArrayReader[T]): T = value match {
     case x if
     (reader.isInstanceOf[OptionFormat[_]] &
       !x.contains(fieldName)) =>
@@ -104,7 +104,7 @@ trait ProductFormats extends ProductFormatsInstances {
 
 object ProductFormats {
 
-  private def unmangle(name: String) = {
+  private def unmangle(name: String): String = {
     import java.lang.{StringBuilder => JStringBuilder}
     @tailrec def rec(ix: Int, builder: JStringBuilder): String = {
       val rem = name.length - ix

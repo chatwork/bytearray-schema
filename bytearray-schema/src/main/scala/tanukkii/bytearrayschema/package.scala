@@ -23,8 +23,8 @@ package object bytearrayschema {
   def deserializationError(msg: String, cause: Throwable = null, fieldNames: List[String] = Nil) = throw new DeserializationException(msg, cause, fieldNames)
   def serializationError(msg: String) = throw new SerializationException(msg)
 
-  def bytesMapReader[T](implicit reader: BytesMapReader[T]) = reader
-  def bytesMapWriter[T](implicit writer: BytesMapWriter[T]) = writer
+  def bytesMapReader[T](implicit reader: BytesMapReader[T]): BytesMapReader[T] = reader
+  def bytesMapWriter[T](implicit writer: BytesMapWriter[T]): BytesMapWriter[T] = writer
   
   implicit def pimpAny[T](any: T) = new PimpedAny(any)
   implicit def pimpMap(map: Map[String, Array[Byte]]) = new PimpedMap(map)
