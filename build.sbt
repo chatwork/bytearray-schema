@@ -2,6 +2,7 @@ import spray.boilerplate.BoilerplatePlugin
 
 val scala211Version = "2.11.8"
 val scala212Version = "2.12.2"
+val scala213Version = "2.13.5"
 
 lazy val root = (project in file("."))
   .settings(
@@ -9,7 +10,7 @@ lazy val root = (project in file("."))
     publish := {},
     Compile / publishArtifact := false,
     releaseCrossBuild := true,
-    crossScalaVersions := Seq(scala211Version, scala212Version)
+    crossScalaVersions := Seq(scala211Version, scala212Version, scala213Version)
   ).aggregate(bytearraySchema, bytearraySchemaHBase)
 
 val commonSettings = Seq(
@@ -18,8 +19,8 @@ val commonSettings = Seq(
   homepage := Some(new URL("https://github.com/TanUkkii007/bytearray-schema")),
   startYear := Some(2016),
   licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq(scala211Version, scala212Version),
+  scalaVersion := scala213Version,
+  crossScalaVersions := Seq(scala211Version, scala212Version, scala213Version),
   releaseCrossBuild := true,
   scalacOptions ++= Seq("-feature", "-language:_", "-unchecked", "-deprecation", "-encoding", "utf8"),
   resolvers += Opts.resolver.sonatypeReleases,
