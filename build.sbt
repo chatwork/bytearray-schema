@@ -1,3 +1,5 @@
+import spray.boilerplate.BoilerplatePlugin
+
 val scala211Version = "2.11.8"
 val scala212Version = "2.12.2"
 
@@ -32,7 +34,7 @@ lazy val bytearraySchema = (project in file("bytearray-schema")).settings(
       "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
     )
   )
-).settings(Boilerplate.settings)
+).enablePlugins(BoilerplatePlugin)
 
 lazy val bytearraySchemaHBase = (project in file("bytearray-schema-hbase")).settings(
   name := "bytearray-schema-hbase",
