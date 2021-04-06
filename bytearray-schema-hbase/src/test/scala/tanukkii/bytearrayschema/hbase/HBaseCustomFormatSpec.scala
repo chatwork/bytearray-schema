@@ -18,20 +18,9 @@ package tanukkii.bytearrayschema.hbase
 
 import org.apache.hadoop.hbase.util.Bytes
 import org.scalatest.funsuite.AnyFunSuite
+import tanukkii.bytearrayschema._
 
 class HBaseCustomFormatSpec extends AnyFunSuite {
-
-  import tanukkii.bytearrayschema._
-
-  case class MyType(name: String, value: Int)
-
-  case class OptType(name: String, value: Int, point: Option[Double])
-
-  object MyTypeProtocol extends HBaseBytesMapProtocol {
-    implicit val myTypeByteArrayFormat = bytesMapFormat2(MyType)
-
-    implicit val optTypeByteArrayFormat = bytesMapFormat3(OptType)
-  }
 
   import MyTypeProtocol._
 
@@ -92,4 +81,14 @@ class HBaseCustomFormatSpec extends AnyFunSuite {
     ))
   }
 
+}
+
+case class MyType(name: String, value: Int)
+
+case class OptType(name: String, value: Int, point: Option[Double])
+
+object MyTypeProtocol extends HBaseBytesMapProtocol {
+  implicit val myTypeByteArrayFormat: BytesMapFormat[MyType] = bytesMapFormat2(MyType)
+
+  implicit val optTypeByteArrayFormat: BytesMapFormat[OptType] = bytesMapFormat3(OptType)
 }
