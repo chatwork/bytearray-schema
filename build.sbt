@@ -5,6 +5,7 @@ val scala212Version = "2.12.2"
 
 lazy val root = (project in file("."))
   .settings(
+    name := "bytearray-schema",
     publish := {},
     Compile / publishArtifact := false,
     releaseCrossBuild := true,
