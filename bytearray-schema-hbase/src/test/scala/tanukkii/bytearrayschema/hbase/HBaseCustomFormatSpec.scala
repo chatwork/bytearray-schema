@@ -17,9 +17,9 @@
 package tanukkii.bytearrayschema.hbase
 
 import org.apache.hadoop.hbase.util.Bytes
-import org.specs2.mutable.Specification
+import org.scalatest.funsuite.AnyFunSuite
 
-class HBaseCustomFormatSpec extends Specification {
+class HBaseCustomFormatSpec extends AnyFunSuite {
 
   import tanukkii.bytearrayschema._
 
@@ -35,64 +35,61 @@ class HBaseCustomFormatSpec extends Specification {
 
   import MyTypeProtocol._
 
-  "HBaseDefaultBytesMapProtocol" should {
+  test("convertTo") {
+    assert(Map("name" -> Bytes.toBytes("John Doe"), "value" -> Bytes.toBytes(10)).convertTo[MyType] === MyType("John Doe", 10))
+  }
 
-    "convertTo" in {
-      Map("name" -> Bytes.toBytes("John Doe"), "value" -> Bytes.toBytes(10)).convertTo[MyType] mustEqual MyType("John Doe", 10)
-    }
+  test("convertTo from mutable.Map") {
+    assert(scala.collection.mutable.Map("name" -> Bytes.toBytes("John Doe"), "value" -> Bytes.toBytes(10)).convertTo[MyType] === MyType("John Doe", 10))
+  }
 
-    "convertTo from mutable.Map" in {
-      scala.collection.mutable.Map("name" -> Bytes.toBytes("John Doe"), "value" -> Bytes.toBytes(10)).convertTo[MyType] mustEqual MyType("John Doe", 10)
-    }
+  test("toBytesMap") {
+    assert(MyType("John Doe", 10).toBytesMap.mapValues(_.toVector).toMap === Map("name" -> Bytes.toBytes("John Doe").toVector, "value" -> Bytes.toBytes(10).toVector))
+  }
 
-    "toBytesMap" in {
-      MyType("John Doe", 10).toBytesMap.mapValues(_.toVector) mustEqual Map("name" -> Bytes.toBytes("John Doe").toVector, "value" -> Bytes.toBytes(10).toVector)
-    }
+  test("convertTo Some") {
+    assert(Map(
+      "name" -> Bytes.toBytes("John Doe"),
+      "value" -> Bytes.toBytes(10),
+      "point" -> Bytes.toBytes(1.0)
+    ).convertTo[OptType] === OptType("John Doe", 10, Some(1.0)))
+  }
 
-    "convertTo Some" in {
-      Map(
-        "name" -> Bytes.toBytes("John Doe"),
-        "value" -> Bytes.toBytes(10),
-        "point" -> Bytes.toBytes(1.0)
-      ).convertTo[OptType] mustEqual OptType("John Doe", 10, Some(1.0))
-    }
+  test("convertTo None") {
+    assert(Map(
+      "name" -> Bytes.toBytes("John Doe"),
+      "value" -> Bytes.toBytes(10)
+    ).convertTo[OptType] === OptType("John Doe", 10, None))
+  }
 
-    "convertTo None" in {
-      Map(
-        "name" -> Bytes.toBytes("John Doe"),
-        "value" -> Bytes.toBytes(10)
-      ).convertTo[OptType] mustEqual OptType("John Doe", 10, None)
-    }
+  test("convertTo None 2") {
+    assert(Map(
+      "name" -> Bytes.toBytes("John Doe"),
+      "value" -> Bytes.toBytes(10),
+      "point" -> Array.empty[Byte]
+    ).convertTo[OptType] === OptType("John Doe", 10, None))
+  }
 
-    "convertTo None 2" in {
-      Map(
-        "name" -> Bytes.toBytes("John Doe"),
-        "value" -> Bytes.toBytes(10),
-        "point" -> Array.empty[Byte]
-      ).convertTo[OptType] mustEqual OptType("John Doe", 10, None)
-    }
+  test("convertTo None 3") {
+    assert(Map(
+      "name" -> Bytes.toBytes("John Doe"),
+      "value" -> Bytes.toBytes(10)
+    ).convertTo[OptType] === OptType("John Doe", 10, None))
+  }
 
-    "convertTo None 3" in {
-      Map(
-        "name" -> Bytes.toBytes("John Doe"),
-        "value" -> Bytes.toBytes(10)
-      ).convertTo[OptType] mustEqual OptType("John Doe", 10, None)
-    }
+  test("toBytesMap Some") {
+    assert(OptType("John Doe", 10, Some(1.0)).toBytesMap.mapValues(_.toVector).toMap === Map(
+      "name" -> Bytes.toBytes("John Doe").toVector,
+      "value" -> Bytes.toBytes(10).toVector,
+      "point" -> Bytes.toBytes(1.0).toVector
+    ))
+  }
 
-    "toBytesMap Some" in {
-      OptType("John Doe", 10, Some(1.0)).toBytesMap.mapValues(_.toVector) mustEqual Map(
-        "name" -> Bytes.toBytes("John Doe").toVector,
-        "value" -> Bytes.toBytes(10).toVector,
-        "point" -> Bytes.toBytes(1.0).toVector
-      )
-    }
-
-    "toBytesMap None" in {
-      OptType("John Doe", 10, None).toBytesMap.mapValues(_.toVector) mustEqual Map(
-        "name" -> Bytes.toBytes("John Doe").toVector,
-        "value" -> Bytes.toBytes(10).toVector
-      )
-    }
+  test("toBytesMap None") {
+    assert(OptType("John Doe", 10, None).toBytesMap.mapValues(_.toVector).toMap === Map(
+      "name" -> Bytes.toBytes("John Doe").toVector,
+      "value" -> Bytes.toBytes(10).toVector
+    ))
   }
 
 }

@@ -29,9 +29,9 @@ lazy val bytearraySchema = (project in file("bytearray-schema")).settings(
   commonSettings ++ Seq(
     name := "bytearray-schema",
     libraryDependencies ++= Seq(
-      "org.specs2" %% "specs2-core" % "3.9.1" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "3.9.1" % "test",
-      "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
+      "org.scalatest" %% "scalatest-funsuite" % Dependencies.scalatest % Test,
+      "org.scalatestplus" %% "scalacheck-1-15" % s"${Dependencies.scalatest}.0" % Test,
+      "org.scalacheck" %% "scalacheck" % "1.15.2" % Test
     )
   )
 ).enablePlugins(BoilerplatePlugin)
@@ -42,7 +42,7 @@ lazy val bytearraySchemaHBase = (project in file("bytearray-schema-hbase")).sett
     libraryDependencies ++= Seq(
       "org.apache.hadoop" % "hadoop-common" % "2.6.2" % "provided",
       "org.apache.hbase" % "hbase-common" % "1.1.4" % "provided",
-      "org.specs2" %% "specs2-core" % "3.9.1" % "test"
+      "org.scalatest" %% "scalatest-funsuite" % Dependencies.scalatest % Test
     )
   )
 ).dependsOn(bytearraySchema)
