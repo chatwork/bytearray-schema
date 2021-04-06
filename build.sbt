@@ -5,8 +5,8 @@ val scala212Version = "2.12.2"
 
 lazy val root = (project in file("."))
   .settings(
-    publish := (),
-    publishArtifact in Compile := false,
+    publish := {},
+    Compile / publishArtifact := false,
     releaseCrossBuild := true,
     crossScalaVersions := Seq(scala211Version, scala212Version)
   ).aggregate(bytearraySchema, bytearraySchemaHBase)
@@ -22,7 +22,6 @@ val commonSettings = Seq(
   releaseCrossBuild := true,
   scalacOptions ++= Seq("-feature", "-language:_", "-unchecked", "-deprecation", "-encoding", "utf8"),
   resolvers += Opts.resolver.sonatypeReleases,
-  (scalacOptions in doc) ++= Seq("-doc-title", name.value + " " + version.value)
 )
 
 lazy val bytearraySchema = (project in file("bytearray-schema")).settings(
