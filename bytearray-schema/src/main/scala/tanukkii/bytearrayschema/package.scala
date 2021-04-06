@@ -39,9 +39,6 @@ package object bytearrayschema {
   implicit final class MutableMapOps(private val map: scala.collection.mutable.Map[String, Array[Byte]]) extends AnyVal {
     def convertTo[T](implicit reader: MutableBytesMapReader[T]): T = reader.readMutable(map)
   }
-}
-
-package bytearrayschema {
 
   case class DeserializationException(msg: String, cause: Throwable = null, fieldNames: List[String] = Nil) extends RuntimeException(msg, cause)
   class SerializationException(msg: String) extends RuntimeException(msg)
